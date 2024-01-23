@@ -45,6 +45,13 @@ class ToDoList extends Component
         Todo::find($id)->delete();
     }
 
+    public function toggle($id)
+    {
+        $todo = Todo::find($id);
+        $todo->completed = !$todo->completed;
+        $todo->save();
+    }
+
 
     public function render()
     {
