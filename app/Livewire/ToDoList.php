@@ -40,6 +40,11 @@ class ToDoList extends Component
         session()->flash('success', 'Successfully Created !');
     }
 
+    public function delete($id)
+    {
+        Todo::find($id)->delete();
+    }
+
 
     public function render()
     {
