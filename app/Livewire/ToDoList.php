@@ -18,6 +18,12 @@ class ToDoList extends Component
 
     public $search;
 
+    // Edit purpose
+    public $todoId;
+
+    #[Rule('required|min:3|max:50')]
+    public $newName;
+
     public function create()
     {
         /* Steps :
@@ -50,6 +56,27 @@ class ToDoList extends Component
         $todo = Todo::find($id);
         $todo->completed = !$todo->completed;
         $todo->save();
+    }
+
+    public function edit($id)
+    {
+        $this->todoId = $id;
+        $this->newName = Todo::find($id)->name;
+    }
+
+    public function cancel()
+    {
+        $this->reset('todoId', 'newName');
+    }
+
+    public function update()
+    {
+        $validated = $this->validateOnly('newName');
+        Todo::find($this->todoId)->update([
+            'name' => $validated['newName'],
+        ]);
+
+        $this->cancel();
     }
 
 
