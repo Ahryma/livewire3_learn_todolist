@@ -44,6 +44,8 @@ class ToDoList extends Component
 
         // Forth Step
         session()->flash('success', 'Successfully Created !');
+
+        $this->resetPage();
     }
 
     public function delete($id)
