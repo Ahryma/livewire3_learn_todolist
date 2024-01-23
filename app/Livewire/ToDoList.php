@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Todo;
+use Exception;
 use Livewire\Component;
 use Livewire\Attributes\Rule;
 use Livewire\WithPagination;
@@ -33,52 +34,82 @@ class ToDoList extends Component
         4. Send Flash Message
         */
 
-        // First Step
-        $validated = $this->validateOnly('name');
+        try {
+            // First Step
+            $validated = $this->validateOnly('name');
 
-        // Second Step
-        Todo::create($validated);
+            // Second Step
+            Todo::create($validated);
 
-        // Third Step
-        $this->reset('name');
+            // Third Step
+            $this->reset('name');
 
-        // Forth Step
-        session()->flash('success', 'Successfully Created !');
+            // Forth Step
+            session()->flash('success', 'Successfully Created !');
 
-        $this->resetPage();
+            $this->resetPage();
+        } catch (Exception $e) {
+            session()->flash('error', 'Failed to Create Todo !');
+            return;
+        }
     }
 
     public function delete($id)
     {
-        Todo::find($id)->delete();
+        try {
+            Todo::findOrFail($id)->delete();
+        } catch (Exception $e) {
+            session()->flash('error', 'Failed to Delete Todo !');
+            return;
+        }
     }
 
     public function toggle($id)
     {
-        $todo = Todo::find($id);
-        $todo->completed = !$todo->completed;
-        $todo->save();
+        try {
+            $todo = Todo::find($id);
+            $todo->completed = !$todo->completed;
+            $todo->save();
+        } catch (Exception $e) {
+            session()->flash('error', 'Failed to Toggle Todo !');
+            return;
+        }
     }
 
     public function edit($id)
     {
-        $this->todoId = $id;
-        $this->newName = Todo::find($id)->name;
+        try {
+            $this->todoId = $id;
+            $this->newName = Todo::find($id)->name;
+        } catch (Exception $e) {
+            session()->flash('error', 'Failed to Edit Todo !');
+            return;
+        }
     }
 
     public function cancel()
     {
-        $this->reset('todoId', 'newName');
+        try {
+            $this->reset('todoId', 'newName');
+        } catch (Exception $e) {
+            session()->flash('error', 'Failed to Cancel Edit !');
+            return;
+        }
     }
 
     public function update()
     {
-        $validated = $this->validateOnly('newName');
-        Todo::find($this->todoId)->update([
-            'name' => $validated['newName'],
-        ]);
+        try {
+            $validated = $this->validateOnly('newName');
+            Todo::find($this->todoId)->update([
+                'name' => $validated['newName'],
+            ]);
 
-        $this->cancel();
+            $this->cancel();
+        } catch (Exception $e) {
+            session()->flash('error', 'Failed to Update Todo !');
+            return;
+        }
     }
 
 
