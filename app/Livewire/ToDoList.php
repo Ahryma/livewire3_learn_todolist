@@ -101,7 +101,7 @@ class ToDoList extends Component
     {
         try {
             $validated = $this->validateOnly('newName');
-            Todo::find($this->todoId)->update([
+            Todo::findOrFail($this->todoId)->update([
                 'name' => $validated['newName'],
             ]);
 
